@@ -34,6 +34,9 @@ if st.button("Get Recommendation", disabled=client is None):
         else:
             try:
                 data = json.loads(response.choices[0].message.content)
+                if not isinstance(data, dict):
+                    raise ValueError("Expected a JSON object")
+
                 dish_name = data.get("dish_name")
                 ingredients = data.get("ingredients")
 
@@ -51,7 +54,7 @@ if st.button("Get Recommendation", disabled=client is None):
                     ):
                         raise ValueError("Invalid ingredient")
 
-            except (json.JSONDecodeError, TypeError, ValueError):
+            except (json.JSONDecodeError, TypeError, ValueError, IndexError):
                 st.error("The recipe service returned an invalid response. Please try again.")
             else:
                 st.session_state["dish_name"] = dish_name.strip()
